@@ -1,7 +1,7 @@
 FROM jenkins/jenkins
 USER root
 RUN apt-get update \
-  && apt-get install ca-certificates curl
+  && apt-get -y install ca-certificates curl vim
 # RUN install -m 0755 -d /etc/apt/keyrings
 RUN curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
 # RUN chmod a+r /etc/apt/keyrings/docker.asc

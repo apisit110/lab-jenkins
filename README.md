@@ -30,3 +30,11 @@ to run the jenkins
 4. Add your credential to jenkins
 
 Ready to create pipeline
+
+-----
+
+to disable jenkins password
+
+vim /var/jenkins_home/config.xml
+  
+<useSecurity>false</useSecurity>
