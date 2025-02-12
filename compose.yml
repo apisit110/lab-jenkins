@@ -1,0 +1,16 @@
+services:
+  jenkins:
+    container_name: lab-jenkins
+    image: lab-jenkins-custom:0.0.0
+    env_file:
+      - ./.env.jenkins
+    privileged: true
+    volumes:
+      - jenkins_home:/var/jenkins_home:rw
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    ports:
+      - 8080:8080
+      - 50000:50000
+volumes:
+  jenkins_home:
+    external: true
