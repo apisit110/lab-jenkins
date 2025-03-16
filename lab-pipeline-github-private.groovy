@@ -1,5 +1,11 @@
 pipeline {
   agent none
+  environment {
+    AWS_CREDENTIALS = 'aws_s3_admin_1_username_with_password'
+    AWS_REGION = 'ap-southeast-1'
+    S3_BUCKET = 'mybucket'
+    LOCAL_PATH = 'dist/'  // Local folder to upload
+  }
   parameters {
     gitParameter branch: '',
                  branchFilter: 'origin/release/(.*)',
@@ -34,7 +40,14 @@ pipeline {
       steps {
         script {
           if (params.blog) {
-            sh "DOCKER_BUILDKIT=1 docker build -t blog:${params.release} -f apps/blog/Dockerfile ."
+            nodejs('22') {
+              sh "ls"
+              sh "find . -name 'dist' -type d -exec rm -rf {} +"
+              sh "find . -name 'node_modules' -type d -exec rm -rf {} +"
+              sh "node --version"
+              sh "npm install"
+              sh "npm run build"
+            }
           }
         }
       }
@@ -42,17 +55,30 @@ pipeline {
     stage('Prune') {
       agent any
       steps {
-        sh 'docker image prune -a -f'
+        echo 'prune...'
       }
     }
     stage('Checkout Deployment') {
+      agent any
       steps {
         echo 'Checkout Deployment...'
       }
     }
     stage('Deployment') {
+      agent any
       steps {
-        echo 'Deployment...'
+        script {
+          if (params.blog) {
+            withAWS(credentials: AWS_CREDENTIALS, region: AWS_REGION) {
+              s3Upload(
+                bucket: S3_BUCKET,
+                file: LOCAL_PATH,
+                path: '', // Upload to root path
+                workingDir: ''
+              )
+            }
+          }
+        }
       }
     }
   }
