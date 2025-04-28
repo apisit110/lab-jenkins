@@ -15,6 +15,8 @@ to pull private repo we have 2 options
 can config the permission to access
 
 - go to your account Settings -> Developer settings -> Personal access tokens
+  - Fine-grained tokens
+    - set Contents to Read-only
 - generate new token with permission set up
 - jenkins add credential type username and password got from github
 
